@@ -4,8 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "pretest": "eslint --ignore-path .gitignore .",
+    "lint": "eslint --ignore-path .gitignore .",
+    "pretest": "npm run lint",
+    "precommit": "npm run lint && npm run test:changed",
     "test": "jest",
+    "test:changed": "jest --coverage --changedSince=master",
+    "test:update": "jest -u",
     "coverage": "jest --collectCoverageFrom=src/**.js --coverage src"
   },
   "repository": {
