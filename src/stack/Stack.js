@@ -1,68 +1,60 @@
-import SnapshotNode from "./SnapshotNode"
+import assert from 'assert';
+import SnapshotNode from './SnapshotNode';
+
+const getLastSnapshot = snapshots => snapshots[snapshots.length - 1]
+  .map(item => new SnapshotNode(item.value, null));
+
+const addPeekSnapshot = (snapshots) => {
+  const snapshot = getLastSnapshot(snapshots);
+  snapshot[snapshot.length - 1].action = 'peek';
+  snapshots.push(snapshot);
+};
+
+const addPopSnapshot = (snapshots) => {
+  const snapshot = getLastSnapshot(snapshots);
+  snapshot.pop();
+  if (snapshot.length > 0) {
+    snapshots.push(snapshot);
+  }
+};
+
+const addPushSnapshot = (item, snapshots) => {
+  const newNode = new SnapshotNode(item, 'push');
+  if (snapshots.length === 0) {
+    snapshots.push([newNode]);
+  } else {
+    const snapshot = getLastSnapshot(snapshots);
+    snapshot.push(newNode);
+    snapshots.push(snapshot);
+  }
+};
 
 export default class {
-    constructor() {
-        this.data = [];
-        this.snapshots = [];
-    }
+  constructor() {
+    this.data = [];
+    this.snapshots = [];
+  }
 
-    peek() {
-        this._assertEmpty();
-        const data = this.data;
-        this._addPeekSnapshot();
-        return data[data.length - 1];
-    }
+  peek() {
+    assert(this.size > 0, 'stack is empty');
+    const { data } = this;
+    addPeekSnapshot(this.snapshots);
+    return data[data.length - 1];
+  }
 
-    push(item) {
-        this.data.push(item);
-        this._addPushSnapshot(item);
-    }
+  push(item) {
+    this.data.push(item);
+    addPushSnapshot(item, this.snapshots);
+  }
 
-    pop() {
-        this._assertEmpty();
-        const value = this.data.pop()
-        this._addPopSnapshot()
-        return value;
-    }
+  pop() {
+    assert(this.size > 0, 'stack is empty');
+    const value = this.data.pop();
+    addPopSnapshot(this.snapshots);
+    return value;
+  }
 
-    get size() {
-        return this.data.length;
-    }
-
-    _addPeekSnapshot(){
-        const snapshot = this._getLastSnapshot();
-        snapshot[snapshot.length - 1].action = "peek";
-        this.snapshots.push(snapshot);
-    }
-
-    _addPushSnapshot(item) {
-        const snapshots = this.snapshots;
-        const newNode = new SnapshotNode(item, "push");
-        if (snapshots.length === 0) {
-            snapshots.push([newNode]);
-        } else {
-            const snapshot = this._getLastSnapshot();
-            snapshot.push(newNode);
-            snapshots.push(snapshot);
-        }
-    }
-
-    _addPopSnapshot() {
-        const snapshot = this._getLastSnapshot();
-        snapshot.pop();
-        if(snapshot.length > 0){
-            this.snapshots.push(snapshot);
-        }
-    }
-
-    _getLastSnapshot() {
-        const snapshots = this.snapshots;
-        return snapshots[snapshots.length - 1].map(item => new SnapshotNode(item.value, null));
-    }   
-
-    _assertEmpty() {
-        if (this.size === 0){
-            throw "stack is empty";
-        }
-    }
+  get size() {
+    return this.data.length;
+  }
 }
