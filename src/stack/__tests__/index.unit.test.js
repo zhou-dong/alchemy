@@ -15,7 +15,13 @@ describe('vis test', () => {
   test('create svgs', async () => {
     const stack = new Index();
     array().forEach(item => stack.push(item));
+
+    const len = stack.size;
+    for (let i = 0; i < len; i += 1) {
+      stack.peek();
+      stack.pop();
+    }
     const svgs = await stack.createSvgs();
-    console.log(svgs.length);
+    console.log(svgs);
   });
 });

@@ -17,26 +17,47 @@ const viz = new Viz({ Module, render });
 //     console.error(error);
 //   });
 
-const createNodeStyle = (node) => {
-  switch (node.action) {
-    case 'push':
-      return `${node.value}[style=filled,color=yellow,shape=circle]`;
-    case 'peek':
-      return `${node.value}[style=filled,color=red,shape=circle]`;
-    default:
-      return `${node.value}[style=filled,color=green,shape=circle]`;
+const defaultStyle = name => `${name}[style=filled,color=grey,shape=circle]`;
+const peekStyle = name => `${name}[style=filled,color=yellow,shape=circle]`;
+const pushStyle = name => `${name}[style=filled,color=green,shape=circle]`;
+const popStyle = name => `${name}[style=filled,color=red,shape=circle]`;
+
+const createRelations = (snapshot) => {
+  const { data, item } = snapshot;
+  const relations = data.join('->');
+  if (!item) {
+    return relations;
   }
+  if (!relations.length) {
+    return item;
+  }
+  return `${relations}->${item}`;
 };
 
-const createRelations = array => array.map(node => node.value).join('->');
+const createGraphNodesStyles = (snapshot) => {
+  const { data, action, item } = snapshot;
+  const styles = data.map(defaultStyle);
+  switch (action) {
+    case 'peek':
+      styles[styles.length - 1] = peekStyle(data[data.length - 1]);
+      break;
+    case 'push':
+      styles.push(pushStyle(item));
+      break;
+    case 'pop':
+      styles[styles.length - 1] = popStyle(data[data.length - 1]);
+      break;
+    default:
+      break;
+  }
+  return styles.join(';');
+};
 
-const createGraphNodesStyles = array => array.map(node => createNodeStyle(node)).join(';');
-
-const createGraph = (array) => {
+const createGraph = (snapshot) => {
   let graph = 'digraph { ';
-  graph += createGraphNodesStyles(array);
+  graph += createGraphNodesStyles(snapshot);
   graph += ' ';
-  graph += createRelations(array);
+  graph += createRelations(snapshot);
   return `${graph} }`;
 };
 
