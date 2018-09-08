@@ -1,21 +1,8 @@
-
 import Viz from 'viz.js';
 import { Module, render } from 'viz.js/full.render';
-import Stack from './Stack';
+import Stack from './SnapshotsStack';
 
 const viz = new Viz({ Module, render });
-
-// viz.renderString("digraph { a -> b}")
-//   .then(result => {
-//     // console.log(result);
-//   })
-//   .catch(error => {
-//     // Create a new Viz instance (@see Caveats page for more info)
-//     viz = new Viz({ Module, render });
-
-//     // Possibly display the error
-//     console.error(error);
-//   });
 
 const defaultStyle = name => `${name}[style=filled,color=grey,shape=circle]`;
 const peekStyle = name => `${name}[style=filled,color=yellow,shape=circle]`;
@@ -25,12 +12,8 @@ const popStyle = name => `${name}[style=filled,color=red,shape=circle]`;
 const createRelations = (snapshot) => {
   const { data, item } = snapshot;
   const relations = data.join('->');
-  if (!item) {
-    return relations;
-  }
-  if (!relations.length) {
-    return item;
-  }
+  if (!item) return relations;
+  if (!relations.length) return item;
   return `${relations}->${item}`;
 };
 
@@ -66,10 +49,6 @@ const createSvg = async graph => viz.renderString(graph)
   .catch((error) => { throw error; });
 
 export default class extends Stack {
-  // play() {
-  //     return this.stack
-  // }
-
   async createSvgs() {
     return Promise.all(this.createGraphs().map(createSvg));
   }

@@ -22,6 +22,6 @@ describe('vis test', () => {
       stack.pop();
     }
     const svgs = await stack.createSvgs();
-    console.log(svgs);
+    console.log(svgs.length);
   });
 });
