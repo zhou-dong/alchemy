@@ -31,14 +31,15 @@ const initCytoscape = (container) => {
         selector: 'node',
         style: {
           'background-color': 'yellow',
-          label: 'data(id)',
+          //label: 'data(id)',
+          //content: 'data(id)',
         },
       },
       {
         selector: 'edge',
         style: {
           width: 3,
-          'arrow-scale': 2,
+          'arrow-scale': 1.5,
           'source-arrow-fill': 'filled',
           'line-color': 'red',
           'target-arrow-color': 'black',
@@ -58,27 +59,51 @@ const initCytoscape = (container) => {
 const peek = (cy) => {
   const lastNode = cy.nodes().last();
   if (lastNode) {
+    const originalColor = lastNode.style('background-color');
     lastNode.style('background-color', 'cyan');
+    setTimeout(() => {
+      lastNode.style('background-color', originalColor);
+    }, 500);
   }
   return cy;
 };
 
 const push = (cy, data) => {
   const lastNode = cy.nodes().last();
-  const nodeId = `n${data}`;
+  const nodeId = `${data}`;
   const edgeId = `e${data}`;
   if (lastNode && lastNode.position()) {
     const { x, y } = lastNode.position();
     return cy.add([
-      { group: 'nodes', data: { id: nodeId }, position: { x: x + 100, y } },
+      {
+        group: 'nodes',
+        data: { id: nodeId },
+        position: { x: x + 100, y },
+        style: {
+          label: nodeId,
+          color: 'pink',
+          'text-halign': 'center',
+          'text-valign': 'center',
+        },
+      },
       { group: 'edges', data: { id: edgeId, source: lastNode.id(), target: nodeId } },
-    ]);
+    ]).unselectify();
   }
 
   const x = 100;
   const y = 100;
   return cy.add([
-    { group: 'nodes', data: { id: nodeId }, renderedPosition: { x, y } },
+    {
+      group: 'nodes',
+      data: { id: nodeId },
+      style: {
+        label: nodeId,
+        'text-halign': 'center',
+        'text-valign': 'center',
+        color: 'pink',
+      },
+      renderedPosition: { x, y },
+    },
   ]);
 };
 
