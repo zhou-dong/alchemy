@@ -1,6 +1,6 @@
 {
-  "name": "alchemy",
-  "version": "1.0.0",
+  "name": "alchemy-core",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/zhou-dong/alchemy#readme",
   "dependencies": {
-    "viz.js": "^2.0.0"
+    "cytoscape": "^3.2.16"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
