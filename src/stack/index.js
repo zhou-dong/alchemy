@@ -28,7 +28,7 @@ export default class {
     return this.stack.size;
   }
 
-  translate() {
+  show() {
     return translate(this.container, this.actions.actions, 1000);
   }
 }
