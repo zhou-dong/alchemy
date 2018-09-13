@@ -2,7 +2,7 @@
 
 import Index from '../index';
 
-describe('main describe', () => {
+xdescribe('main describe', () => {
   test('main test', () => {
     const index = new Index();
     for (let i = 0; i < 10; i += 1) {

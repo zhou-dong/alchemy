@@ -1,6 +1,6 @@
 import Actions from './Actions';
 import Stack from './Stack';
-import translate from './translate';
+import animate from './animate';
 
 export default class {
   constructor(container) {
@@ -28,7 +28,7 @@ export default class {
     return this.stack.size;
   }
 
-  show() {
-    return translate(this.container, this.actions.actions, 1000);
+  show(duration) {
+    return animate(this.container, this.actions.actions, duration);
   }
 }
