@@ -33,7 +33,7 @@ const initCytoscape = (container) => {
 };
 
 const peek = (cy, duration) => {
-  const lastNode = cy.nodes().last();
+  const lastNode = cy.nodes().first();
   if (!lastNode) return cy;
   const color = lastNode.style('background-color');
   lastNode.style('background-color', 'orange');
@@ -61,7 +61,7 @@ const createEdge = (id, source, target) => (
   { group: 'edges', data: { id, source, target } }
 );
 
-const push = (cy, data) => {
+const offer = (cy, data) => {
   const lastNode = cy.nodes().last();
   const nodeId = `${data}`;
   if (!lastNode || !(lastNode.position())) {
@@ -76,16 +76,22 @@ const push = (cy, data) => {
   ]);
 };
 
-const pop = (cy) => {
-  cy.edges().last().remove();
-  cy.nodes().last().remove();
+const poll = (cy) => {
+  const nodes = cy.nodes().toArray();
+  const edges = cy.edges().toArray();
+  // remove first node
+  nodes.forEach(node => cy.remove(node));
+  nodes.slice(1).forEach(node => cy.add(node));
+  // remove first edge
+  edges.forEach(edge => cy.remove(edge));
+  edges.slice(1).forEach(edge => cy.add(edge));
   return cy;
 };
 
 const execute = (cy, { action, data }, duration) => {
   if (action === 'peek') peek(cy, duration / 2);
-  else if (action === 'push') push(cy, data);
-  else if (action === 'pop') pop(cy);
+  else if (action === 'offer') offer(cy, data);
+  else if (action === 'poll') poll(cy);
 };
 
 export default (container, actions, duration) => {

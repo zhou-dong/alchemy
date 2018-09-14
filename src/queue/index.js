@@ -1,31 +1,31 @@
 import Actions from './Actions';
-import Stack from './Stack';
+import Queue from './Queue';
 import animate from './animate';
 
 export default class {
   constructor(container) {
-    this.stack = new Stack();
+    this.queue = new Queue();
     this.actions = new Actions();
     this.container = container;
   }
 
   peek() {
     this.actions.peek();
-    return this.stack.peek();
+    return this.queue.peek();
   }
 
-  push(item) {
-    this.actions.push(item);
-    this.stack.push(item);
+  offer(item) {
+    this.actions.offer(item);
+    this.queue.offer(item);
   }
 
-  pop() {
-    this.actions.pop();
-    return this.stack.pop();
+  poll() {
+    this.actions.poll();
+    return this.queue.poll();
   }
 
   get size() {
-    return this.stack.size;
+    return this.queue.size;
   }
 
   show(duration) {

@@ -1,3 +1,4 @@
 import Stack from './src/stack';
+import Queue from './src/queue';
 
-export default Stack;
+export { Stack, Queue };

@@ -49,15 +49,15 @@ describe('Stack size method', () => {
 });
 
 describe('Stack push peek and pop method', () => {
-  test('', () => {
+  test('push, peek, pop', () => {
     const size = 10;
     for (let i = 0; i < size; i += 1) {
       stack.push(i);
     }
     expect(stack.size).toBe(size);
     const peeked = stack.peek();
-    const poped = stack.pop();
     expect(peeked).toBe(size - 1);
+    const poped = stack.pop();
     expect(peeked).toBe(poped);
   });
 });
