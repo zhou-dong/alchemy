@@ -1,4 +1,5 @@
 import cytoscape from 'cytoscape';
+import { guid } from '../utils';
 
 const minWidth = 30;
 const minHeight = 30;
@@ -14,7 +15,7 @@ const defaultEdgeStyle = {
 };
 
 const defaultNodeStyle = {
-  label: 'data(id)',
+  // label: 'data(id)',
   color: 'white',
   'text-halign': 'center',
   'text-valign': 'center',
@@ -52,7 +53,7 @@ const createNode = (id, position, style) => (
   {
     group: 'nodes',
     data: { id },
-    style: Object.assign(style, dynamicWidthHeight(id)),
+    style,
     position,
   }
 );
@@ -63,16 +64,20 @@ const createEdge = (id, source, target) => (
 
 const offer = (cy, data) => {
   const lastNode = cy.nodes().last();
-  const nodeId = `${data}`;
+  const label = `${data}`;
+  const nodeId = guid();
+
+  const { width, height } = dynamicWidthHeight(label);
+  const style = { label, width, height };
+
   if (!lastNode || !(lastNode.position())) {
-    const { width, height } = dynamicWidthHeight(nodeId);
-    return cy.add(createNode(nodeId, { x: width / 2, y: height / 2 }, {}));
+    return cy.add(createNode(nodeId, { x: width / 2, y: height / 2 }, style));
   }
   const { x, y } = lastNode.position();
-  const width = lastNode.width();
+  // const width = lastNode.width();
   return cy.add([
-    createNode(nodeId, { x: x + width * 2, y }, {}),
-    createEdge(`e${data}`, lastNode.id(), nodeId),
+    createNode(nodeId, { x: x + width * 2, y }, style),
+    createEdge(`e${nodeId}`, lastNode.id(), nodeId),
   ]);
 };
 
