@@ -72,7 +72,7 @@ const push = (cy, data) => {
   const width = lastNode.width();
   return cy.add([
     createNode(nodeId, { x: x + width * 2, y }, {}),
-    createEdge(`e${data}`, lastNode.id(), nodeId),
+    createEdge(`e${data}`, nodeId, lastNode.id()),
   ]);
 };
 
