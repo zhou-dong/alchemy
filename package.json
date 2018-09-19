@@ -1,6 +1,6 @@
 {
   "name": "alchemy-core",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -34,7 +34,6 @@
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jest": "^21.22.0",
-    "jest": "^23.5.0",
-    "regenerator-runtime": "^0.12.1"
+    "jest": "^23.5.0"
   }
 }
