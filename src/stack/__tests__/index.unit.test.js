@@ -10,7 +10,7 @@ beforeEach(() => {
 
 const getLastAction = () => {
   const array = stack.actions.actions;
-  return array[array.length - 1];
+  return array[array.length - 1].action;
 };
 
 describe('Stack Index Stack basic method', () => {

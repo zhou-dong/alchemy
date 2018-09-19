@@ -1,4 +1,5 @@
 import Stack from './src/stack';
 import Queue from './src/queue';
+import Alchemy from './src';
 
-export { Stack, Queue };
+export { Alchemy, Stack, Queue };

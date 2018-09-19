@@ -1,26 +1,26 @@
-import Actions from './Actions';
+import Actions from '../commons/Actions';
 import Stack from './Stack';
-import animate from './animate';
+import Animator from './Animator';
 
 export default class {
-  constructor(container) {
+  constructor(container, actions) {
     this.stack = new Stack();
-    this.actions = new Actions();
-    this.container = container;
+    this.actions = actions || new Actions();
+    this.animator = new Animator(container);
   }
 
   peek() {
-    this.actions.peek();
+    this.addAction('peek');
     return this.stack.peek();
   }
 
   push(item) {
-    this.actions.push(item);
+    this.addAction('push', item);
     this.stack.push(item);
   }
 
   pop() {
-    this.actions.pop();
+    this.addAction('pop');
     return this.stack.pop();
   }
 
@@ -28,7 +28,11 @@ export default class {
     return this.stack.size;
   }
 
+  addAction(action, data) {
+    this.actions.add(this.animator, action, data);
+  }
+
   show(duration) {
-    animate(this.container, this.actions.actions, duration);
+    this.actions.play(duration);
   }
 }

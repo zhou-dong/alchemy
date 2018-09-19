@@ -10,7 +10,7 @@ beforeEach(() => {
 
 const getLastAction = () => {
   const array = queue.actions.actions;
-  return array[array.length - 1];
+  return array[array.length - 1].action;
 };
 
 describe('Queue Index queue basic method', () => {

@@ -93,15 +93,12 @@ const execute = (cy, { action, data }, duration) => {
   else if (action === 'pop') pop(cy);
 };
 
-export default (container, actions, duration) => {
-  const cy = initCytoscape(container);
-  let i = 0;
-  const interval = setInterval(() => {
-    if (i === actions.length) {
-      clearInterval(interval);
-      return;
-    }
-    execute(cy, actions[i], duration);
-    i += 1;
-  }, duration);
-};
+export default class {
+  constructor(container) {
+    this.cy = initCytoscape(container);
+  }
+
+  show(action, duration) {
+    execute(this.cy, action, duration);
+  }
+}

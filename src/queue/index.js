@@ -1,26 +1,26 @@
-import Actions from './Actions';
+import Actions from '../commons/Actions';
 import Queue from './Queue';
-import animate from './animate';
+import Animate from './Animator';
 
 export default class {
-  constructor(container) {
+  constructor(container, actions) {
     this.queue = new Queue();
-    this.actions = new Actions();
-    this.container = container;
+    this.actions = actions || new Actions();
+    this.animator = new Animate(container);
   }
 
   peek() {
-    this.actions.peek();
+    this.addAction('peek');
     return this.queue.peek();
   }
 
   offer(item) {
-    this.actions.offer(item);
+    this.addAction('offer', item);
     this.queue.offer(item);
   }
 
   poll() {
-    this.actions.poll();
+    this.addAction('poll');
     return this.queue.poll();
   }
 
@@ -28,7 +28,11 @@ export default class {
     return this.queue.size;
   }
 
+  addAction(action, data) {
+    this.actions.add(this.animator, action, data);
+  }
+
   show(duration) {
-    animate(this.container, this.actions.actions, duration);
+    this.actions.play(duration);
   }
 }
