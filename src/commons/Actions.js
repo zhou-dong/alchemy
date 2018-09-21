@@ -18,6 +18,10 @@ export default class {
     this.actions.push(new Action(animator, { action, data }));
   }
 
+  addAction(animator, action) {
+    this.actions.push(new Action(animator, action));
+  }
+
   play(duration) {
     let i = 0;
     const interval = setInterval(() => {
