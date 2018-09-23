@@ -1,12 +1,10 @@
-import Graph from '../commons/Graph';
+import Graph, { flash } from '../commons/Graph';
 import { dynamicWidthHeight } from '../utils';
 
 const peek = ({ cy }, duration) => {
   const lastNode = cy.nodes().last();
   if (!lastNode) return;
-  const color = lastNode.style('background-color');
-  lastNode.style('background-color', 'orange');
-  setTimeout(() => lastNode.style('background-color', color), duration);
+  flash(lastNode, duration);
 };
 
 const push = (graph, data) => {

@@ -1,76 +1,93 @@
-import Graph from '../commons/Graph';
+import Graph, { flash } from '../commons/Graph';
 import { dynamicWidthHeight } from '../utils';
 
-const flash = (node, duration) => {
-  if (!node) return;
-  const color = node.style('background-color');
-  node.style('background-color', 'orange');
-  setTimeout(() => node.style('background-color', color), duration);
+const getNodeStyle = (value) => {
+  const label = `${value}`;
+  return Object.assign(dynamicWidthHeight(label), { label });
 };
 
-const removeElements = (cy, elements) => {
-  elements.forEach(element => cy.remove(element));
+const addFirstNode = (graph, value) => {
+  const style = getNodeStyle(value);
+  const { width, height } = style;
+  graph.addNode({ x: width / 2 + 250, y: height / 2 }, style);
 };
 
-const addElements = (cy, elements) => {
-  elements.forEach(element => cy.add(element));
-};
-
-const addEdges = (graph, nodes) => {
-  nodes.forEach((node, i) => {
-    if (i < nodes.length - 1) {
-      graph.addEdge(node.id(), nodes[i + 1].id());
-    }
-  });
-};
-
-const prependNode = (graph, firstNode, width, style) => {
+const prependNode = (graph, value) => {
+  const firstNode = graph.cy.nodes().first();
+  const style = getNodeStyle(value);
+  const { width } = style;
   const { cy } = graph;
   const { x, y } = firstNode.position();
   const position = { x: x - width * 2, y };
   const nodes = cy.nodes().toArray();
   // remove edges and nodes
-  removeElements(cy, cy.edges().toArray());
-  removeElements(cy, nodes);
+  graph.removeElements(cy.edges().toArray());
+  graph.removeElements(nodes);
   // prepend node, nodes, edges
   graph.addNode(position, style);
-  addElements(cy, nodes);
-  addEdges(graph, cy.nodes().toArray());
+  graph.addElements(nodes);
+  graph.addEdges();
 };
 
 const prepend = (graph, value) => {
   const firstNode = graph.cy.nodes().first();
-  const label = `${value}`;
-
-  const { width, height } = dynamicWidthHeight(label);
-  const style = { label, width, height };
-
   if (!firstNode || !(firstNode.position())) {
-    graph.addNode({ x: width / 2 + 250, y: height / 2 }, style);
+    addFirstNode(graph, value);
   } else {
-    prependNode(graph, firstNode, width, style);
+    prependNode(graph, value);
   }
+};
+
+const appendNode = (graph, value) => {
+  const lastNode = graph.cy.nodes().last();
+  const style = getNodeStyle(value);
+  const { width } = style;
+  const { x, y } = lastNode.position();
+  const nodeId = graph.addNode({ x: x + width * 2, y }, style);
+  graph.addEdge(lastNode.id(), nodeId);
 };
 
 const append = (graph, value) => {
   const lastNode = graph.cy.nodes().last();
-  const label = `${value}`;
-
-  const { width, height } = dynamicWidthHeight(label);
-  const style = { label, width, height };
-
   if (!lastNode || !(lastNode.position())) {
-    graph.addNode({ x: width / 2, y: height / 2 }, style);
+    addFirstNode(graph, value);
   } else {
-    const { x, y } = lastNode.position();
-    const nodeId = graph.addNode({ x: x + width * 2, y }, style);
-    graph.addEdge(lastNode.id(), nodeId);
+    appendNode(graph, value);
   }
 };
 
 const find = ({ cy }, index, duration) => {
   const node = (cy.nodes().toArray())[index];
-  flash(node, duration);
+  if (node) {
+    flash(node, duration);
+  }
+};
+
+const rearrange = (graph) => {
+  const { cy } = graph;
+  const { x, y } = cy.nodes().first().position();
+  cy.nodes().toArray().forEach((node, i) => {
+    const width = node.width();
+    node.position({ x: x + i * 2 * width, y });
+  });
+};
+
+const insertNodes = (graph, index, value) => {
+  const style = getNodeStyle(value);
+  const { cy } = graph;
+  const nodes = cy.nodes().toArray();
+
+  graph.removeElements(cy.edges().toArray());
+  graph.removeElements(nodes);
+  nodes.forEach((node, i) => {
+    if (index === i) {
+      graph.addNode({ x: 0, y: 0 }, style);
+    }
+    cy.add(node);
+  });
+
+  rearrange(graph);
+  graph.addEdges();
 };
 
 const insert = (graph, index, value) => {
@@ -78,46 +95,24 @@ const insert = (graph, index, value) => {
     prepend(graph, value);
     return;
   }
-  const { cy } = graph;
-  const nodes = cy.nodes().toArray();
-  if (index >= nodes.length) {
+  const { length } = graph.cy.nodes();
+  if (index > length || index < 0) {
     return;
   }
-  if (index === nodes.length - 1) {
+  if (index === length) {
     append(graph, value);
     return;
   }
-
-  removeElements(cy, nodes);
-
-  const label = `${value}`;
-  const { width, height } = dynamicWidthHeight(label);
-  const style = { label, width, height };
-
-  nodes.forEach((node, i) => {
-    if (index === i) {
-      graph.addNode({ x: 1, y: 1 }, style);
-    }
-    cy.add(node);
-  });
-
-  const first = cy.nodes().first();
-  const { x, y } = first.position();
-
-  cy.nodes().toArray().forEach((node, i) => {
-    node.position({ x: x + i * 2 * width, y });
-  });
-
-  addEdges(graph, cy.nodes().toArray());
+  insertNodes(graph, index, value);
 };
 
 const deleteHead = (graph) => {
   const { cy } = graph;
   const nodes = cy.nodes().toArray();
-  removeElements(cy, cy.edges().toArray());
-  removeElements(cy, nodes);
-  addElements(cy, nodes.slice(1));
-  addEdges(graph, cy.nodes().toArray());
+  graph.removeElements(cy.edges().toArray());
+  graph.removeElements(nodes);
+  graph.addElements(nodes.slice(1));
+  graph.addEdges();
 };
 
 const deleteTail = ({ cy }) => {
@@ -128,14 +123,15 @@ const deleteTail = ({ cy }) => {
 const remove = (graph, index) => {
   const { cy } = graph;
   const nodes = cy.nodes().toArray();
-  removeElements(cy, cy.edges().toArray());
-  removeElements(cy, nodes);
+  graph.removeElements(cy.edges().toArray());
+  graph.removeElements(nodes);
   nodes.forEach((node, i) => {
     if (i !== index) {
       cy.add(node);
     }
   });
-  addEdges(graph, cy.nodes().toArray());
+  rearrange(graph);
+  graph.addEdges();
 };
 
 const execute = (graph, { action, index, value }, duration) => {

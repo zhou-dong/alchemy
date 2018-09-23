@@ -1,12 +1,11 @@
-import Graph from '../commons/Graph';
+import Graph, { flash } from '../commons/Graph';
 import { dynamicWidthHeight } from '../utils';
 
 const peek = ({ cy }, duration) => {
   const lastNode = cy.nodes().first();
-  if (!lastNode) return;
-  const color = lastNode.style('background-color');
-  lastNode.style('background-color', 'orange');
-  setTimeout(() => lastNode.style('background-color', color), duration);
+  if (lastNode) {
+    flash(lastNode, duration);
+  }
 };
 
 const offer = (graph, data) => {
@@ -25,15 +24,12 @@ const offer = (graph, data) => {
   }
 };
 
-const poll = ({ cy }) => {
-  const nodes = cy.nodes().toArray();
-  const edges = cy.edges().toArray();
-  // remove first node
-  nodes.forEach(node => cy.remove(node));
-  nodes.slice(1).forEach(node => cy.add(node));
-  // remove first edge
-  edges.forEach(edge => cy.remove(edge));
-  edges.slice(1).forEach(edge => cy.add(edge));
+const poll = (graph) => {
+  const nodes = graph.cy.nodes().toArray();
+  graph.removeEdges();
+  graph.removeElements(nodes);
+  graph.addElements(nodes.slice(1));
+  graph.addEdges();
 };
 
 const execute = (graph, { action, data }, duration) => {
