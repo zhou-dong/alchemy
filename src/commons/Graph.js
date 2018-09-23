@@ -12,11 +12,10 @@ const defaultEdgeStyle = {
 };
 
 const defaultNodeStyle = {
-  // label: 'data(id)',
   color: 'white',
   'text-halign': 'center',
   'text-valign': 'center',
-  'background-color': 'green',
+  'background-color': 'coral',
   'font-weight': 'normal',
 };
 

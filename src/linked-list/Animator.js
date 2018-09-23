@@ -8,8 +8,9 @@ const getNodeStyle = (value) => {
 
 const addFirstNode = (graph, value) => {
   const style = getNodeStyle(value);
-  const { width, height } = style;
-  graph.addNode({ x: width / 2 + 250, y: height / 2 }, style);
+  const x = graph.cy.width() / 2;
+  const y = graph.cy.height() / 2;
+  graph.addNode({ x, y }, style);
 };
 
 const prependNode = (graph, value) => {

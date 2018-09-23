@@ -8,14 +8,13 @@ const peek = ({ cy }, duration) => {
 };
 
 const push = (graph, data) => {
-  const lastNode = graph.cy.nodes().last();
   const label = `${data}`;
-
   const { width, height } = dynamicWidthHeight(label);
   const style = { label, width, height };
 
+  const lastNode = graph.cy.nodes().last();
   if (!lastNode || !(lastNode.position())) {
-    graph.addNode({ x: width / 2, y: height / 2 }, style);
+    graph.addNode({ x: width, y: graph.cy.height() / 2 }, style);
   } else {
     const { x, y } = lastNode.position();
     const nodeId = graph.addNode({ x: x + width * 2, y }, style);
